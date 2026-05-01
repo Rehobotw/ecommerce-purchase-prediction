@@ -1,0 +1,468 @@
+\documentclass[12pt,a4paper]{article}
+
+%% ── Packages ──────────────────────────────────────────────────────────────────
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{times}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{hyperref}
+\usepackage{pgfgantt}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{microtype}
+\usepackage{caption}
+\usepackage{fancyhdr}
+
+%% ── Hyperref setup ────────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue,
+  pdftitle={CS Research Proposal -- Rehobot Wolde},
+  pdfauthor={Rehobot Wolde}
+}
+
+%% ── Header / Footer ──────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Rehobot Wolde }
+\lhead{\small Research Methods in Computer Science}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{14pt}
+
+%% ── Chapter / Section formatting ─────────────────────────────────────────────
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+\titlespacing*{\chapter}{0pt}{0pt}{18pt}
+\titlespacing*{\section}{0pt}{10pt}{4pt}
+\titlespacing*{\subsection}{0pt}{6pt}{2pt}
+
+\setstretch{1.15}
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\begin{document}
+
+%% ── Cover Page ────────────────────────────────────────────────────────────────
+\begin{titlepage}
+\centering
+\vspace*{0.6cm}
+\includegraphics[width=3cm,keepaspectratio]{image/Hu_logo.png}\\[12pt]
+{\Large \textbf{Hawassa University}}\\[4pt]
+{\large Institute of Technology}\\[4pt]
+{\normalsize Faculty of Informatics --- Department of Computer Science}\\[10pt]
+\rule{0.82\linewidth}{0.6pt}\\[14pt]
+{\normalsize \textbf{Research Methods in Computer Science} (CoSc3101)}\\[4pt]
+\vspace{22pt}
+
+{\Large \bfseries Research Proposal}\\[10pt]
+{\LARGE \bfseries Design and Implementation of a\\[6pt]
+Data Mining-Based System for Predicting\\[6pt]
+Customer Purchasing Patterns in E-Commerce\\[6pt]
+Using Transaction and Clickstream Data}\\[28pt]
+
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{c}
+\textbf{Prepared by:} Rehobot Wolde \\
+\textbf{ID No.:} 3308/16 \\
+\textbf{Subject Area:} Data Mining \\
+\textbf{Submission Date:} May 1, 2026 \\
+\textbf{Advisor:} Mr. Birehane B.
+\end{tabular}
+
+\vfill
+\end{titlepage}
+
+%% ── Table of Contents ─────────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+%% ══════════════════════════════════════════════════════════════════════════════
+%% CHAPTER 1 — LOGICAL FOUNDATION
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Chapter 1: Logical Foundation}
+
+\subsection{Problem Statement}
+
+E-commerce businesses should be able to accurately forecast individual customers'
+purchasing intentions in real time, enabling personalised marketing, dynamic inventory
+management, and reduced cart-abandonment rates. Ideally, such systems would exploit
+both \emph{transactional history} (what a customer bought) and \emph{clickstream behaviour}
+(what a customer browsed, dwell time, and navigation path) to build rich, contextually
+aware models.
+
+Most operational e-commerce recommendation engines rely on collaborative filtering or
+simple rule-based heuristics that consider only past purchases and ignore rich behavioural
+signals embedded in clickstream logs. Studies such as \cite{kumar2022clickstream} and
+\cite{zhang2023deep} confirm that combining these two data modalities can lift prediction
+accuracy, yet most real-world systems have yet to integrate them. Moreover, existing
+approaches often suffer from data sparsity, cold-start problems for new users, and poor
+generalisation across product categories.
+
+Without accurate purchase-intent prediction, retailers lose significant revenue through
+missed up-sell opportunities, excessive promotional spending on unlikely buyers, and
+high cart-abandonment rates. The inability to leverage clickstream data also means that
+short-term behavioural shifts (e.g.\ browsing a competitor's product before purchasing)
+remain invisible to current models.
+
+\subsection{Research Objectives}
+
+\textbf{General Objective:}
+To design and implement a hybrid data mining system that integrates transaction and
+clickstream data for accurately predicting customer purchasing patterns in e-commerce
+environments.
+
+\textbf{Specific Objectives:}
+\begin{enumerate}[leftmargin=1.5cm]
+  \item \textbf{Data Integration Pipeline:} By the end of Week~6, construct and
+        validate a preprocessing pipeline that merges transaction records and clickstream
+        logs from the REES46 e-commerce dataset, achieving less than 5\% missing-value rate
+        after cleaning.
+
+  \item \textbf{Predictive Model Development:} By the end of Week~10, train and tune
+        at least three classification models (XGBoost, Random Forest, and LSTM-based
+        sequential model) on the integrated dataset, targeting a minimum F1-score of 0.80
+        on the held-out test set.
+
+  \item \textbf{Comparative Evaluation and Reporting:} By the end of Week~13, produce
+        a rigorous comparative evaluation of all models using Accuracy, Precision, Recall,
+        F1-Score, AUC-ROC, and Mean Reciprocal Rank, and document findings in a
+        reproducible GitHub repository with full experimental logs.
+\end{enumerate}
+
+%% ══════════════════════════════════════════════════════════════════════════════
+%% CHAPTER 2 — LITERATURE SYNTHESIS & SOTA
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Chapter 2: Literature Synthesis \& State-of-the-Art}
+
+\subsection{Synthesis Matrix}
+
+\begingroup
+\footnotesize
+\setstretch{1.0}
+\begin{longtable}{>{\raggedright}p{2.8cm}
+                  >{\raggedright}p{3.1cm}
+                  >{\raggedright}p{2.6cm}
+                  >{\raggedright}p{2.2cm}
+                  >{\raggedright\arraybackslash}p{2.6cm}}
+\toprule
+\textbf{Author(s) / Year} & \textbf{Method} & \textbf{Dataset} &
+\textbf{Key Metric / Result} & \textbf{Limitation} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{\small\itshape (continued from previous page)}\\
+\toprule
+\textbf{Author(s) / Year} & \textbf{Method} & \textbf{Dataset} &
+\textbf{Key Metric / Result} & \textbf{Limitation} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+
+Sakar et al.\ \cite{sakar2019realtime} (2019)
+  & Real-time purchase-intention prediction with multilayer perceptron and LSTM recurrent neural networks
+  & Online Shoppers Purchasing Intention Dataset
+  & MLP achieved higher accuracy and F1-score than RF and SVM
+  & Session-level features dominate; limited integration of longer-term transactional context \\
+\addlinespace
+
+van den Broeck \cite{broeck2020sequential} (2020)
+  & Sequential machine learning for shopping-intention prediction on ordered behavioural data
+  & Sequential clickstream data from e-commerce sessions
+  & Recurrent/sequential models improved purchase-intention prediction over non-sequential baselines
+  & Limited transparency and weak portability across sparse user profiles \\
+\addlinespace
+
+Liu et al.\ \cite{liu2023feature} (2023)
+  & Feature aggregation on clickstream data for purchase-intent prediction
+  & E-commerce clickstream dataset
+  & Aggregated behavioural features improved classification performance
+  & Aggregation reduces temporal granularity and may suppress sequential dependencies \\
+\addlinespace
+
+Wang et al.\ \cite{wang2025sales} (2025)
+  & Machine-learning framework for e-commerce sales prediction using transaction data
+  & Transaction-level e-commerce sales data
+  & Boosting/tree-based models performed strongly on structured purchase records
+  & Transaction data alone does not capture browsing path or immediate intent shifts \\
+\addlinespace
+
+Kumar and Singh \cite{kumar2026clickstream} (2026)
+  & Purchase prediction from clickstream data using sequential deep learning
+  & User clickstream logs from e-commerce platforms
+  & Sequential models captured click-order dependencies and improved predictive quality
+  & Requires substantial labelled behavioural data and careful sequence handling \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\subsection{Research Gap Analysis (Synthesis)}
+
+Recent literature demonstrates substantial progress in applying machine learning and
+sequential deep learning techniques to e-commerce behavioural modelling. Sakar et al.\
+\cite{sakar2019realtime} established an important benchmark by showing that LSTM-style
+sequence learning can outperform conventional classifiers such as random forests and
+support vector machines when predicting purchasing intention from online shopping
+sessions. Their work confirms the value of sequential modelling for understanding
+customer browsing transitions. Van den Broeck \cite{broeck2020sequential} further
+supports the use of ordered behavioural sequences by showing that recurrent approaches
+are better suited to shopping-intention prediction than static feature-only baselines.
+
+More recent studies expanded this direction through feature aggregation and tree-based
+learning. Liu et al.\ \cite{liu2023feature} demonstrate that carefully aggregated
+clickstream features improve purchase-intent prediction, while Wang et al.\
+\cite{wang2025sales} show that boosting-oriented models remain effective on structured
+transaction data. Kumar and Singh \cite{kumar2026clickstream} reinforce the relevance of
+sequential learning by showing that clickstream-based deep models capture complex
+behavioural dependencies that simpler methods often miss.
+
+Collectively, these studies establish a strong state-of-the-art baseline for e-commerce
+purchase prediction using either transaction-focused modelling, clickstream-based
+sequential learning, or feature aggregation. However, the reviewed studies largely
+evaluate these methods in isolation. Existing research gives limited attention to the
+integration of transactional purchase history with sequential clickstream behaviour
+within a unified comparative framework that also prioritises interpretability for
+small-to-mid-sized retailers.
+
+This research addresses that gap by developing a unified predictive framework that
+combines transaction-derived features and clickstream behavioural sequences from the
+REES46 dataset while comparatively evaluating XGBoost, Random Forest, and LSTM
+models. In addition, the study incorporates SHAP-based explainability mechanisms to
+improve transparency and practical usability for retailers seeking interpretable customer
+purchase predictions.
+
+%% ══════════════════════════════════════════════════════════════════════════════
+%% CHAPTER 3 — METHODOLOGY
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Chapter 3: Technical Methodology \& Experimental Design}
+
+\subsection{System Architecture Overview}
+
+The system follows a four-layer pipeline architecture:
+
+\begin{enumerate}[leftmargin=1.4cm, itemsep=2pt]
+  \item \textbf{Data Ingestion Layer:} Raw CSV files from the REES46 dataset
+        (events.csv --- clickstream; purchases.csv --- transactions) are ingested into a
+        Pandas DataFrame. A user--session key is used to join both sources.
+
+  \item \textbf{Pre-processing \& Feature Engineering Layer:} Cleaning, encoding, and
+        feature extraction (see Section 3.3). Output is a unified feature matrix $X \in
+        \mathbb{R}^{n \times d}$ with binary purchase label $y \in \{0,1\}$.
+
+  \item \textbf{Modelling Layer:} Three model families are trained and tuned via
+        5-fold stratified cross-validation: (a) XGBoost classifier, (b) Random Forest,
+        and (c) a two-layer LSTM with attention for sequential clickstream input.
+
+  \item \textbf{Evaluation \& Explainability Layer:} Metrics are computed on a
+        held-out 20\% test split. SHAP TreeExplainer is applied to the best-performing
+        tree model to generate global and local feature importance explanations.
+\end{enumerate}
+
+\subsection{Tool Justification}
+
+\begin{description}[leftmargin=1.4cm, style=nextline, itemsep=3pt]
+  \item[\textbf{Python 3.11 + scikit-learn 1.4:}]
+    Industry-standard ML ecosystem with native support for cross-validation, pipeline
+    construction, and metric computation. Chosen over R for stronger community support
+    for deep learning integration.
+
+  \item[\textbf{XGBoost 2.0 vs. LightGBM:}]
+    XGBoost is retained because recent transaction-oriented and clickstream-based studies
+    show that boosting-style tree models remain competitive on structured behavioural data
+    and are especially useful when features are heterogeneous, sparse, and partly
+    aggregated. The literature base supports using a strong boosting benchmark alongside
+    sequential neural models.
+
+  \item[\textbf{PyTorch 2.2 (LSTM) vs. TensorFlow/Keras:}]
+    PyTorch was selected to implement the LSTM architecture because the reviewed
+    sequential-intent studies show that recurrent models are effective for modelling
+    ordered clickstream behaviour and variable-length session traces. PyTorch's dynamic
+    computation graph and \texttt{PackedSequence} API allow efficient processing of
+    variable-length sessions while supporting rapid experimentation.
+
+  \item[\textbf{SHAP 0.44:}]
+    Provides model-agnostic and tree-specific explainability, directly addressing the
+    interpretability limitations identified across the reviewed literature.
+
+  \item[\textbf{Pandas + Matplotlib + Seaborn:}]
+    Used for data wrangling, exploratory data analysis, and result visualisation.
+    Preferred over external dashboarding tools for full reproducibility in code.
+\end{description}
+
+\subsection{Data Strategy}
+
+\textbf{Dataset:} REES46 E-Commerce Behaviour Data, available on
+\href{https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store}{Kaggle}
+(IEEE DataPort mirror). Contains approximately 67 million events (views, cart additions,
+purchases) and 9.7 million unique users across October--November 2019.
+
+\textbf{Pre-processing Steps:}
+\begin{enumerate}[leftmargin=1.4cm, itemsep=2pt]
+  \item \textbf{Deduplication:} Remove duplicate event rows using
+        (\texttt{user\_session}, \texttt{event\_time}, \texttt{product\_id}) composite key.
+  \item \textbf{Missing Value Handling:} Drop rows where \texttt{user\_id} is null ($< 1\%$);
+        impute missing \texttt{category\_code} with ``unknown'' category.
+  \item \textbf{Session Segmentation:} Define a session as a contiguous sequence of events
+        with inter-event gap $\leq 30$ minutes; assign unique \texttt{session\_id}.
+  \item \textbf{Feature Extraction:}
+        \begin{itemize}[itemsep=1pt]
+          \item \emph{Transactional:} purchase frequency, recency (days since last purchase),
+                average order value, product category diversity score.
+          \item \emph{Clickstream:} session length (events), view-to-cart ratio,
+                average dwell time proxy (event gap), number of distinct products viewed,
+                cart-abandonment flag.
+        \end{itemize}
+  \item \textbf{Label Construction:} Binary label $y=1$ if a purchase event occurs within
+        the same session as the feature observation window, else $y=0$.
+  \item \textbf{Class Imbalance:} Apply SMOTE oversampling on training fold only to address
+        the $\approx$1:9 purchase-to-non-purchase imbalance.
+  \item \textbf{Normalisation:} StandardScaler applied to continuous features for tree
+        models; MinMaxScaler used for LSTM input sequences.
+\end{enumerate}
+
+\subsection{Evaluation Metrics}
+
+Let TP, FP, TN, FN denote true positives, false positives, true negatives, and false negatives respectively.
+
+\[
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\qquad
+\text{Precision} = \frac{TP}{TP + FP}
+\qquad
+\text{Recall} = \frac{TP}{TP + FN}
+\]
+\[
+F_1 = 2 \cdot \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+\qquad
+\text{AUC-ROC} = \int_0^1 \text{TPR}(t)\,\mathrm{d}\,\text{FPR}(t)
+\]
+\[
+\text{MRR} = \frac{1}{|Q|}\sum_{i=1}^{|Q|} \frac{1}{\text{rank}_i}
+\]
+
+Primary success criterion: $F_1 \geq 0.80$ and $\text{AUC-ROC} \geq 0.88$ on the held-out test set for the best-performing model.
+
+%% ══════════════════════════════════════════════════════════════════════════════
+%% CHAPTER 4 — PROJECT MANAGEMENT & ETHICS
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Chapter 4: Project Management \& Ethics}
+
+\subsection{Project Timeline --- Gantt Chart}
+
+\begin{center}
+\begin{ganttchart}[
+    hgrid,
+    vgrid,
+    title/.style={fill=gray!20, draw=black},
+    title label font=\footnotesize\bfseries,
+    bar/.style={fill=blue!40, rounded corners=2pt},
+    bar label font=\footnotesize,
+    group/.style={fill=gray!50},
+    group label font=\footnotesize\bfseries,
+    milestone/.style={fill=red!60, shape=diamond},
+    x unit=0.68cm,
+    y unit title=0.5cm,
+    y unit chart=0.5cm
+]{1}{14}
+  \gantttitle{Feb}{2}
+  \gantttitle{Mar}{3}
+  \gantttitle{Apr}{5}
+  \gantttitle{May}{4} \\
+  \gantttitlelist{1,...,14}{1} \\
+
+  \ganttgroup{Phase 1: Literature Review}{1}{5} \\
+  \ganttbar{Search \& Screen Papers}{1}{2} \\
+  \ganttbar{Synthesis Matrix}{2}{4} \\
+  \ganttbar{Proposal Draft}{4}{5} \\
+  \ganttmilestone{Proposal Submitted}{5} \\
+
+  \ganttgroup{Phase 2: Data \& Pre-processing}{5}{9} \\
+  \ganttbar{Dataset Acquisition}{5}{6} \\
+  \ganttbar{Cleaning \& Feature Engineering}{6}{8} \\
+  \ganttbar{EDA \& Visualisation}{8}{9} \\
+
+  \ganttgroup{Phase 3: Model Development}{9}{12} \\
+  \ganttbar{XGBoost / RF Training}{9}{10} \\
+  \ganttbar{LSTM Implementation}{10}{11} \\
+  \ganttbar{Hyperparameter Tuning}{11}{12} \\
+
+  \ganttgroup{Phase 4: Evaluation \& Writing}{12}{14} \\
+  \ganttbar{Model Comparison \& SHAP}{12}{13} \\
+  \ganttbar{Final Report Writing}{13}{14} \\
+  \ganttmilestone{Final Submission}{14}
+\end{ganttchart}
+\end{center}
+
+\subsection{Ethical Considerations}
+
+\textbf{Data Privacy (GDPR Compliance).}
+The REES46 dataset is fully anonymised: user identifiers are hashed and no personally
+identifiable information (PII) such as names, addresses, or payment details is present.
+Because the data is publicly released on Kaggle under a permissive licence, its use in
+academic research complies with GDPR Article~89 (research exemptions). No additional
+consent or data processing agreement is required. Should the methodology be adapted to
+real production data, a Data Protection Impact Assessment (DPIA) would be mandatory
+under GDPR Article~35.
+
+\textbf{Bias and Fairness in the AI Model.}
+Purchase prediction models can inadvertently encode demographic or socioeconomic bias
+if historical purchasing patterns reflect structural inequalities (e.g.\ certain user
+segments having fewer purchase events due to economic constraints rather than low
+intent). To mitigate this, the study will (i) inspect feature distributions across
+proxy demographic segments where inferrable from behavioural signals, (ii) report
+model performance broken down by user activity quartile, and (iii) avoid including
+features that directly proxy for protected characteristics.
+
+\textbf{Environmental Impact.}
+Training tree ensembles and a moderate-scale LSTM on approximately 2 million sampled
+records (post-stratification) on a single GPU is estimated to consume fewer than 5~kWh
+total energy across all experimental runs---negligible compared to large-scale
+foundation-model training. All experiments will be logged via CodeCarbon to transparently
+report carbon emissions.
+
+%% ══════════════════════════════════════════════════════════════════════════════
+%% CHAPTER 5 — VERSION CONTROL & DOCUMENTATION
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Chapter 5: Version Control \& Documentation}
+
+\subsection{GitHub Repository}
+
+A public GitHub repository has been initialised for this project at:\\[4pt]
+\centerline{\url{https://github.com/Rehobotw/ecommerce-purchase-prediction}}
+
+The repository structure follows the standard research-code layout:
+
+\begin{verbatim}
+ecommerce-purchase-prediction/
++-- README.md
++-- proposal/
+|   +-- main.tex
+|   +-- references.bib
++-- data/
+|   +-- raw/          # placeholder; downloaded via script
++-- notebooks/
+|   +-- 01_eda.ipynb
+|   +-- 02_preprocessing.ipynb
+|   +-- 03_modelling.ipynb
++-- src/
+|   +-- preprocess.py
+|   +-- models.py
+|   +-- evaluate.py
++-- requirements.txt
+\end{verbatim}
+
+\section*{Acknowledgments}
+The author gratefully acknowledges the use of AI tools in preparing this proposal.  Specifically, OpenAI’s ChatGPT and the Perplexity AI search assistant were used to help draft and organize the text and to identify relevant background information.  These tools assisted in refining the writing and locating sources, but all final analysis and conclusions are the author’s own work.
+
+
+%% ── References ────────────────────────────────────────────────────────────────
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+\end{document}
